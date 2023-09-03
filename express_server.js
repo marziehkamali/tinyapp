@@ -37,23 +37,33 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]};
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+
+  let key = generateRandomString()
+  urlDatabase[key] = req.body.longURL
+  res.redirect(`/urls/${key}`);
 });
 
 function generateRandomString() {
   let alphaNum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
   let randomStr = "";
-  for(let i=0; i < 6; i++){
+  for (let i = 0; i < 6; i++) {
     let result = Math.floor(Math.random() * 35);
     randomStr = randomStr.concat(alphaNum[result]);
   }
   return randomStr;
 }
 
-console.log(generateRandomString());
+app.get("/u/:id", (req, res) => {
+let longURL = urlDatabase[req.params.id];
+if(urlDatabase[req.params.id]){
+  res.redirect(longURL);
+} else {
+  res.send("it does not exist");
+}
+});
+
